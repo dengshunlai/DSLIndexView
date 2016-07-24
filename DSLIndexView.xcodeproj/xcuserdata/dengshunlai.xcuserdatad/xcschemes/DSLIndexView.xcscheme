@@ -5,6 +5,22 @@
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DDE085D41D450F6B00CD5B88"
+               BuildableName = "DSLIndexView.app"
+               BlueprintName = "DSLIndexView"
+               ReferencedContainer = "container:DSLIndexView.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
@@ -12,7 +28,36 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DDE085ED1D450F6B00CD5B88"
+               BuildableName = "DSLIndexViewTests.xctest"
+               BlueprintName = "DSLIndexViewTests"
+               ReferencedContainer = "container:DSLIndexView.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DDE085F81D450F6B00CD5B88"
+               BuildableName = "DSLIndexViewUITests.xctest"
+               BlueprintName = "DSLIndexViewUITests"
+               ReferencedContainer = "container:DSLIndexView.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "DDE085D41D450F6B00CD5B88"
+            BuildableName = "DSLIndexView.app"
+            BlueprintName = "DSLIndexView"
+            ReferencedContainer = "container:DSLIndexView.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -26,6 +71,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "DDE085D41D450F6B00CD5B88"
+            BuildableName = "DSLIndexView.app"
+            BlueprintName = "DSLIndexView"
+            ReferencedContainer = "container:DSLIndexView.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -35,6 +90,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "DDE085D41D450F6B00CD5B88"
+            BuildableName = "DSLIndexView.app"
+            BlueprintName = "DSLIndexView"
+            ReferencedContainer = "container:DSLIndexView.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

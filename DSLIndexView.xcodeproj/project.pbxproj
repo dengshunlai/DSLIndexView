@@ -15,6 +15,9 @@
 		DDE085E81D450F6B00CD5B88 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DDE085E61D450F6B00CD5B88 /* LaunchScreen.storyboard */; };
 		DDE085F31D450F6B00CD5B88 /* DSLIndexViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE085F21D450F6B00CD5B88 /* DSLIndexViewTests.m */; };
 		DDE085FE1D450F6B00CD5B88 /* DSLIndexViewUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE085FD1D450F6B00CD5B88 /* DSLIndexViewUITests.m */; };
+		DDE0860E1D450FD400CD5B88 /* DSLIndexView.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE0860D1D450FD400CD5B88 /* DSLIndexView.m */; };
+		DDE086111D45101100CD5B88 /* UILabel+DSLIndexView.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE086101D45101100CD5B88 /* UILabel+DSLIndexView.m */; };
+		DDE086141D45101D00CD5B88 /* DSLIndexFeatureView.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE086131D45101D00CD5B88 /* DSLIndexFeatureView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +54,12 @@
 		DDE085F91D450F6B00CD5B88 /* DSLIndexViewUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DSLIndexViewUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE085FD1D450F6B00CD5B88 /* DSLIndexViewUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSLIndexViewUITests.m; sourceTree = "<group>"; };
 		DDE085FF1D450F6B00CD5B88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DDE0860C1D450FD400CD5B88 /* DSLIndexView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSLIndexView.h; sourceTree = "<group>"; };
+		DDE0860D1D450FD400CD5B88 /* DSLIndexView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSLIndexView.m; sourceTree = "<group>"; };
+		DDE0860F1D45101100CD5B88 /* UILabel+DSLIndexView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+DSLIndexView.h"; sourceTree = "<group>"; };
+		DDE086101D45101100CD5B88 /* UILabel+DSLIndexView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+DSLIndexView.m"; sourceTree = "<group>"; };
+		DDE086121D45101D00CD5B88 /* DSLIndexFeatureView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSLIndexFeatureView.h; sourceTree = "<group>"; };
+		DDE086131D45101D00CD5B88 /* DSLIndexFeatureView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSLIndexFeatureView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +110,7 @@
 		DDE085D71D450F6B00CD5B88 /* DSLIndexView */ = {
 			isa = PBXGroup;
 			children = (
+				DDE0860B1D450FBF00CD5B88 /* DSLIndexView */,
 				DDE085DB1D450F6B00CD5B88 /* AppDelegate.h */,
 				DDE085DC1D450F6B00CD5B88 /* AppDelegate.m */,
 				DDE085DE1D450F6B00CD5B88 /* ViewController.h */,
@@ -138,6 +148,19 @@
 				DDE085FF1D450F6B00CD5B88 /* Info.plist */,
 			);
 			path = DSLIndexViewUITests;
+			sourceTree = "<group>";
+		};
+		DDE0860B1D450FBF00CD5B88 /* DSLIndexView */ = {
+			isa = PBXGroup;
+			children = (
+				DDE0860C1D450FD400CD5B88 /* DSLIndexView.h */,
+				DDE0860D1D450FD400CD5B88 /* DSLIndexView.m */,
+				DDE0860F1D45101100CD5B88 /* UILabel+DSLIndexView.h */,
+				DDE086101D45101100CD5B88 /* UILabel+DSLIndexView.m */,
+				DDE086121D45101D00CD5B88 /* DSLIndexFeatureView.h */,
+				DDE086131D45101D00CD5B88 /* DSLIndexFeatureView.m */,
+			);
+			path = DSLIndexView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -271,8 +294,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDE085E01D450F6B00CD5B88 /* ViewController.m in Sources */,
+				DDE086111D45101100CD5B88 /* UILabel+DSLIndexView.m in Sources */,
+				DDE086141D45101D00CD5B88 /* DSLIndexFeatureView.m in Sources */,
 				DDE085DD1D450F6B00CD5B88 /* AppDelegate.m in Sources */,
 				DDE085DA1D450F6B00CD5B88 /* main.m in Sources */,
+				DDE0860E1D450FD400CD5B88 /* DSLIndexView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,6 +442,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = DSLIndexView/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dsl.DSLIndexView;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -427,6 +454,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = DSLIndexView/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dsl.DSLIndexView;
 				PRODUCT_NAME = "$(TARGET_NAME)";
