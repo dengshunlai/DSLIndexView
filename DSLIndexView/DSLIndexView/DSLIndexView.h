@@ -19,7 +19,6 @@
 typedef void (^DSLIndexViewSelectBlock)(NSInteger index);
 
 typedef NS_ENUM(NSInteger, DSLIndexViewStyle) {
-
     DSLIndexViewStyleWave,
     DSLIndexViewStyleFeatureRound
 };
@@ -55,6 +54,8 @@ typedef NS_ENUM(NSInteger, DSLIndexViewStyle) {
  *  索引条建议高度
  */
 @property (nonatomic, assign, readonly) CGFloat fitHeight;
+
+@property (nonatomic, weak) UITableView *master;
 
 /**
  *  便利构造器

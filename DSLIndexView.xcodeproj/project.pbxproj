@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D635D0471D4890690084E5F6 /* UITableView+DSLIndexView.m in Sources */ = {isa = PBXBuildFile; fileRef = D635D0461D4890690084E5F6 /* UITableView+DSLIndexView.m */; };
 		DDE085DA1D450F6B00CD5B88 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE085D91D450F6B00CD5B88 /* main.m */; };
 		DDE085DD1D450F6B00CD5B88 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE085DC1D450F6B00CD5B88 /* AppDelegate.m */; };
 		DDE085E01D450F6B00CD5B88 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE085DF1D450F6B00CD5B88 /* ViewController.m */; };
@@ -38,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D635D0451D4890690084E5F6 /* UITableView+DSLIndexView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+DSLIndexView.h"; sourceTree = "<group>"; };
+		D635D0461D4890690084E5F6 /* UITableView+DSLIndexView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+DSLIndexView.m"; sourceTree = "<group>"; };
 		DDE085D51D450F6B00CD5B88 /* DSLIndexView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DSLIndexView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE085D91D450F6B00CD5B88 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DDE085DB1D450F6B00CD5B88 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -153,6 +156,8 @@
 		DDE0860B1D450FBF00CD5B88 /* DSLIndexView */ = {
 			isa = PBXGroup;
 			children = (
+				D635D0451D4890690084E5F6 /* UITableView+DSLIndexView.h */,
+				D635D0461D4890690084E5F6 /* UITableView+DSLIndexView.m */,
 				DDE0860C1D450FD400CD5B88 /* DSLIndexView.h */,
 				DDE0860D1D450FD400CD5B88 /* DSLIndexView.m */,
 				DDE0860F1D45101100CD5B88 /* UILabel+DSLIndexView.h */,
@@ -294,6 +299,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDE085E01D450F6B00CD5B88 /* ViewController.m in Sources */,
+				D635D0471D4890690084E5F6 /* UITableView+DSLIndexView.m in Sources */,
 				DDE086111D45101100CD5B88 /* UILabel+DSLIndexView.m in Sources */,
 				DDE086141D45101D00CD5B88 /* DSLIndexFeatureView.m in Sources */,
 				DDE085DD1D450F6B00CD5B88 /* AppDelegate.m in Sources */,
@@ -526,6 +532,7 @@
 				DDE086041D450F6B00CD5B88 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DDE086051D450F6B00CD5B88 /* Build configuration list for PBXNativeTarget "DSLIndexViewTests" */ = {
 			isa = XCConfigurationList;
@@ -534,6 +541,7 @@
 				DDE086071D450F6B00CD5B88 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DDE086081D450F6B00CD5B88 /* Build configuration list for PBXNativeTarget "DSLIndexViewUITests" */ = {
 			isa = XCConfigurationList;
@@ -542,6 +550,7 @@
 				DDE0860A1D450F6B00CD5B88 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

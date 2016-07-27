@@ -75,9 +75,10 @@ static CGFloat const kFeatureViewDistance = 60;
     _labelWidth = kLabelWidth;
 }
 
-- (void)layoutSubviews
+- (void)dealloc
 {
-    [super layoutSubviews];
+    [self removeObserver:self forKeyPath:@"master"];
+    NSLog(@"%s",__func__);
 }
 
 #pragma mark - Set method
@@ -109,6 +110,21 @@ static CGFloat const kFeatureViewDistance = 60;
         
         _fontSize = fontSize;
         _labelWidth = kFontSize + 3;
+    }
+}
+
+- (void)setMaster:(UITableView *)master
+{
+    _master = master;
+    [self addObserver:self forKeyPath:@"master" options:NSKeyValueObservingOptionNew context:nil];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"master"]) {
+        if (((typeof(self))object).master == nil) {
+            [self removeFromSuperview];
+        }
     }
 }
 
@@ -201,12 +217,14 @@ static CGFloat const kFeatureViewDistance = 60;
         _featureView.hidden = YES;
     }
     
-    if (index >= 0 && index < _indexCount) {
-        self.selectBlock(index);
-    } else if (index < 0) {
-        self.selectBlock(0);
-    } else if (index >= _indexCount) {
-        self.selectBlock(_indexCount - 1);
+    if (self.selectBlock) {
+        if (index >= 0 && index < _indexCount) {
+            self.selectBlock(index);
+        } else if (index < 0) {
+            self.selectBlock(0);
+        } else if (index >= _indexCount) {
+            self.selectBlock(_indexCount - 1);
+        }
     }
 }
 
