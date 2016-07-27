@@ -47,7 +47,6 @@
 {
     self.dsl_indexs = indexs;
     self.dsl_indexView = [DSLIndexView indexViewWithIndexTitles:indexs style:style];
-    self.dsl_indexView.master = self;
     [self.superview addSubview:self.dsl_indexView];
     self.dsl_indexView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.superview addConstraint:[NSLayoutConstraint constraintWithItem:self.dsl_indexView
@@ -65,15 +64,6 @@
                                                                            options:0
                                                                            metrics:@{@"height":@(self.dsl_indexView.fitHeight)}
                                                                              views:@{@"dsl_indexView":self.dsl_indexView}]];
-}
-
-@end
-
-@implementation UIViewController (DSLIndexView)
-
-- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
-{
-    return @[@"a",@"b",@"c",@"d"];
 }
 
 @end

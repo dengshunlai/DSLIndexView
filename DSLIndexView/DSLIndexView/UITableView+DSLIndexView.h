@@ -16,7 +16,3 @@
 - (void)dsl_setupIndexViewWithIndexs:(NSArray *)indexs style:(DSLIndexViewStyle)style;
 
 @end
-
-@interface UIViewController (DSLIndexView)
-
-@end

@@ -55,8 +55,6 @@ typedef NS_ENUM(NSInteger, DSLIndexViewStyle) {
  */
 @property (nonatomic, assign, readonly) CGFloat fitHeight;
 
-@property (nonatomic, weak) UITableView *master;
-
 /**
  *  便利构造器
  *

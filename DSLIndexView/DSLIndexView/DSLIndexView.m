@@ -75,12 +75,6 @@ static CGFloat const kFeatureViewDistance = 60;
     _labelWidth = kLabelWidth;
 }
 
-- (void)dealloc
-{
-    [self removeObserver:self forKeyPath:@"master"];
-    NSLog(@"%s",__func__);
-}
-
 #pragma mark - Set method
 
 - (void)setIndexTitles:(NSArray *)indexTitles
@@ -110,21 +104,6 @@ static CGFloat const kFeatureViewDistance = 60;
         
         _fontSize = fontSize;
         _labelWidth = kFontSize + 3;
-    }
-}
-
-- (void)setMaster:(UITableView *)master
-{
-    _master = master;
-    [self addObserver:self forKeyPath:@"master" options:NSKeyValueObservingOptionNew context:nil];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:@"master"]) {
-        if (((typeof(self))object).master == nil) {
-            [self removeFromSuperview];
-        }
     }
 }
 

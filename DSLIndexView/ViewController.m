@@ -20,6 +20,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+//    self.automaticallyAdjustsScrollViewInsets = NO;
     
     _indexs = @[].mutableCopy;
     for (int i = 0; i < 26; i++) {
@@ -29,17 +30,44 @@
         [_indexs addObject:string];
     }
     
+//    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(360, 0, 15, 603)];
+//    view.backgroundColor = [UIColor redColor];
+//    [_tableView addSubview:view];
+    
+//    [self addObserver:self forKeyPath:@"tableView.contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+    [self addObserver:self forKeyPath:@"tableView.bounds" options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew|NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionPrior context:nil];
+    
     //显示索引条
 //    [_tableView dsl_setupIndexViewWithIndexs:_indexs style:DSLIndexViewStyleWave];
     
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        [_tableView removeFromSuperview];
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [self test];
 //    });
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"tableView.contentOffset"]) {
+        NSLog(@"%@",NSStringFromCGPoint(_tableView.contentOffset));
+    } else if ([keyPath isEqualToString:@"tableView.bounds"]) {
+        NSLog(@"%@",NSStringFromCGRect(_tableView.bounds));
+    }
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)test
+{
+    for (UIView *view in _tableView.subviews) {
+        if ([view isKindOfClass:NSClassFromString(@"UITableViewIndex")]) {
+            NSLog(@"%@",view);
+            NSLog(@"%@",view.superview);
+            NSLog(@"%@",view.constraints);
+        }
+    }
 }
 
 #pragma mark - UITableViewDataSource
@@ -59,10 +87,10 @@
     return [UITableViewCell new];
 }
 
-//- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
-//{
-//    return _indexs;
-//}
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+    return _indexs;
+}
 
 #pragma mark - UITableViewDelegate
 
