@@ -9,14 +9,31 @@
 #import "UITableView+DSLIndexView.h"
 #import <objc/runtime.h>
 
+static void *dsl_indexViewContext = &dsl_indexViewContext;
+
 @interface UITableView ()
 
+@property (strong, nonatomic) UIView *dsl_indexContainerView;
 @property (strong, nonatomic) DSLIndexView *dsl_indexView;
 @property (strong, nonatomic) NSArray *dsl_indexs;
 
 @end
 
 @implementation UITableView (DSLIndexView)
+
+- (UIView *)dsl_indexContainerView
+{
+    UIView *view = objc_getAssociatedObject(self, @selector(dsl_indexContainerView));
+    if (!view) {
+        self.dsl_indexContainerView = [self dsl_createIndexContainerView];
+    }
+    return view;
+}
+
+- (void)setDsl_indexContainerView:(UIView *)dsl_indexContainerView
+{
+    objc_setAssociatedObject(self, @selector(dsl_indexContainerView), dsl_indexContainerView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
 
 - (DSLIndexView *)dsl_indexView
 {
@@ -38,6 +55,13 @@
     objc_setAssociatedObject(self, @selector(dsl_indexs), dsl_indexs, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
+- (UIView *)dsl_createIndexContainerView
+{
+    UIView *view = [UIView new];
+    view.backgroundColor = [UIColor clearColor];
+    return view;
+}
+
 - (void)dsl_setupIndexViewWithIndexs:(NSArray *)indexs
 {
     [self dsl_setupIndexViewWithIndexs:indexs style:DSLIndexViewStyleWave];
@@ -45,25 +69,18 @@
 
 - (void)dsl_setupIndexViewWithIndexs:(NSArray *)indexs style:(DSLIndexViewStyle)style
 {
+    [self addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionInitial context:dsl_indexViewContext];
     self.dsl_indexs = indexs;
     self.dsl_indexView = [DSLIndexView indexViewWithIndexTitles:indexs style:style];
-    [self.superview addSubview:self.dsl_indexView];
-    self.dsl_indexView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.superview addConstraint:[NSLayoutConstraint constraintWithItem:self.dsl_indexView
-                                                               attribute:NSLayoutAttributeCenterY
-                                                               relatedBy:NSLayoutRelationEqual
-                                                                  toItem:self.superview
-                                                               attribute:NSLayoutAttributeCenterY
-                                                              multiplier:1
-                                                                constant:0]];
-    [self.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[dsl_indexView(width)]|"
-                                                                           options:0
-                                                                           metrics:@{@"width":@(self.dsl_indexView.fitWidth)}
-                                                                             views:@{@"dsl_indexView":self.dsl_indexView}]];
-    [self.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[dsl_indexView(height)]"
-                                                                           options:0
-                                                                           metrics:@{@"height":@(self.dsl_indexView.fitHeight)}
-                                                                             views:@{@"dsl_indexView":self.dsl_indexView}]];
+    [self addSubview:self.dsl_indexView];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if (context == dsl_indexViewContext) {
+        self.dsl_indexView.frame = CGRectMake(self.bounds.size.width - self.dsl_indexView.fitWidth, self.bounds.origin.y, self.dsl_indexView.fitWidth, self.bounds.size.height);
+        [self bringSubviewToFront:self.dsl_indexView];
+    }
 }
 
 @end
