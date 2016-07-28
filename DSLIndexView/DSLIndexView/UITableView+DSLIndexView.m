@@ -25,7 +25,8 @@ static void *dsl_indexViewContext = &dsl_indexViewContext;
 {
     UIView *view = objc_getAssociatedObject(self, @selector(dsl_indexContainerView));
     if (!view) {
-        self.dsl_indexContainerView = [self dsl_createIndexContainerView];
+        self.dsl_indexContainerView = view = [UIView new];
+        view.backgroundColor = [UIColor lightGrayColor];
     }
     return view;
 }
@@ -55,13 +56,6 @@ static void *dsl_indexViewContext = &dsl_indexViewContext;
     objc_setAssociatedObject(self, @selector(dsl_indexs), dsl_indexs, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (UIView *)dsl_createIndexContainerView
-{
-    UIView *view = [UIView new];
-    view.backgroundColor = [UIColor clearColor];
-    return view;
-}
-
 - (void)dsl_setupIndexViewWithIndexs:(NSArray *)indexs
 {
     [self dsl_setupIndexViewWithIndexs:indexs style:DSLIndexViewStyleWave];
@@ -72,14 +66,20 @@ static void *dsl_indexViewContext = &dsl_indexViewContext;
     [self addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionInitial context:dsl_indexViewContext];
     self.dsl_indexs = indexs;
     self.dsl_indexView = [DSLIndexView indexViewWithIndexTitles:indexs style:style];
-    [self addSubview:self.dsl_indexView];
+    [self.dsl_indexContainerView addSubview:self.dsl_indexView];
+    self.dsl_indexView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.dsl_indexContainerView addConstraint:[NSLayoutConstraint constraintWithItem:self.dsl_indexView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.dsl_indexContainerView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    [self.dsl_indexContainerView addConstraint:[NSLayoutConstraint constraintWithItem:self.dsl_indexView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.dsl_indexContainerView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [self.dsl_indexContainerView addConstraint:[NSLayoutConstraint constraintWithItem:self.dsl_indexView attribute:NSLayoutAttributeWidth relatedBy:0 toItem:nil attribute:0 multiplier:1 constant:self.dsl_indexView.fitWidth]];
+    [self.dsl_indexContainerView addConstraint:[NSLayoutConstraint constraintWithItem:self.dsl_indexView attribute:NSLayoutAttributeHeight relatedBy:0 toItem:nil attribute:0 multiplier:1 constant:self.dsl_indexView.fitHeight]];
+    [self addSubview:self.dsl_indexContainerView];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
     if (context == dsl_indexViewContext) {
-        self.dsl_indexView.frame = CGRectMake(self.bounds.size.width - self.dsl_indexView.fitWidth, self.bounds.origin.y, self.dsl_indexView.fitWidth, self.bounds.size.height);
-        [self bringSubviewToFront:self.dsl_indexView];
+        self.dsl_indexContainerView.frame = CGRectMake(self.bounds.size.width - self.dsl_indexView.fitWidth, self.bounds.origin.y, self.dsl_indexView.fitWidth, self.bounds.size.height);
+        [self bringSubviewToFront:self.dsl_indexContainerView];
     }
 }
 

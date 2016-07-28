@@ -82,6 +82,13 @@ static CGFloat const kFeatureViewDistance = 60;
     _indexTitles = indexTitles;
     _indexCount = indexTitles.count;
     [self createIndexLabel];
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(test)];
+    [self addGestureRecognizer:pan];
+}
+
+- (void)test
+{
+    NSLog(@"%s",__func__);
 }
 
 - (void)setStyle:(DSLIndexViewStyle)style
