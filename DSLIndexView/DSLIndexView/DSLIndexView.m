@@ -8,16 +8,13 @@
 
 #import "DSLIndexView.h"
 #import "UILabel+DSLIndexView.h"
-#import "DSLIndexFeatureView.h"
 
 static NSInteger const kIndexViewStyle = DSLIndexViewStyleWave;
-static CGFloat const kFontSize = 12;
+static CGFloat const kFontSize = 14;
 static CGFloat const kLabelWidth = kFontSize + 3;
-static CGFloat const kMaxMoveDistance = -45;
-static CGFloat const kLeftRightEdge = 8;
-static CGFloat const kTopBottomEdge = 8;
-static CGFloat const kFeatureRoundSize = 45;
-static CGFloat const kFeatureViewDistance = 60;
+static CGFloat const kMaxMoveDistance = -55;
+static CGFloat const kLeftRightEdge = 3;
+static CGFloat const kAnimationDuration = 0.1;
 
 @interface DSLIndexView ()
 
@@ -27,7 +24,6 @@ static CGFloat const kFeatureViewDistance = 60;
 @property (nonatomic, assign) NSInteger index;
 @property (nonatomic, assign) NSInteger indexCount;
 @property (nonatomic, copy) DSLIndexViewSelectBlock selectBlock;
-@property (nonatomic, strong) DSLIndexFeatureView *featureView;
 
 @end
 
@@ -82,11 +78,13 @@ static CGFloat const kFeatureViewDistance = 60;
     _indexTitles = indexTitles;
     _indexCount = indexTitles.count;
     [self createIndexLabel];
-    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(test)];
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
     [self addGestureRecognizer:pan];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
+    [self addGestureRecognizer:tap];
 }
 
-- (void)test
+- (void)tap:(UITapGestureRecognizer *)sender
 {
     NSLog(@"%s",__func__);
 }
@@ -95,11 +93,8 @@ static CGFloat const kFeatureViewDistance = 60;
 {
     _style = style;
     if (_style == DSLIndexViewStyleFeatureRound) {
-        
         [self createFeatureView];
-    }
-    else if (_style == DSLIndexViewStyleWave) {
-        
+    } else if (_style == DSLIndexViewStyleWave) {
         [_featureView removeFromSuperview];
         _featureView = nil;
     }
@@ -142,10 +137,10 @@ static CGFloat const kFeatureViewDistance = 60;
     }];
     
     _fitWidth = _labelWidth + kLeftRightEdge * 2;
-    _fitHeight = _labelWidth * _indexTitles.count + kTopBottomEdge * 2;
+    _fitHeight = _labelWidth * _indexTitles.count;
     
     [_labels enumerateObjectsUsingBlock:^(UILabel *label, NSUInteger idx, BOOL * stop) {
-        label.frame = CGRectMake(kLeftRightEdge, _labelWidth * idx + kTopBottomEdge, _labelWidth, _labelWidth);
+        label.frame = CGRectMake(kLeftRightEdge, _labelWidth * idx, _labelWidth, _labelWidth);
     }];
 }
 
@@ -153,15 +148,13 @@ static CGFloat const kFeatureViewDistance = 60;
 {
     DSLIndexFeatureViewStyle featureViewStyle;
     if (_style == DSLIndexViewStyleFeatureRound) {
-        
         featureViewStyle = DSLIndexFeatureViewStyleRound;
     }
-    _featureView = [DSLIndexFeatureView indexFeatureViewWithFrame:CGRectMake(0, 0, kFeatureRoundSize, kFeatureRoundSize) style:featureViewStyle];
+    _featureView = [DSLIndexFeatureView indexFeatureViewWithFrame:CGRectZero style:featureViewStyle];
     _featureView.hidden = YES;
-    [self addSubview:_featureView];
 }
 
-#pragma mark - Touch event
+#pragma mark - Touch event & PanGestureRecognizer
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
@@ -173,34 +166,6 @@ static CGFloat const kFeatureViewDistance = 60;
         [self waveForTouchBeginWithIndex:index];
     } else if (_style == DSLIndexViewStyleFeatureRound) {
         [self featureForTouchBeginWithIndex:index];
-    }
-}
-
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    UITouch *touch = [touches anyObject];
-    CGPoint local = [touch locationInView:self];
-    NSInteger index = local.y / _labelWidth;
-    
-    if (_style == DSLIndexViewStyleWave) {
-        [self waveForTouchMoveWithIndex:index];
-    } else if (_style == DSLIndexViewStyleFeatureRound) {
-        [self featureForTouchBeginWithIndex:index];
-    }
-}
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    UITouch *touch = [touches anyObject];
-    CGPoint local = [touch locationInView:self];
-    NSInteger index = local.y / _labelWidth;
-    
-    if (_style == DSLIndexViewStyleWave) {
-        for (NSInteger i = 0; i < _indexCount; i++) {
-            [self moveIndex:i toValue:0];
-        }
-    } else if (_style == DSLIndexViewStyleFeatureRound) {
-        _featureView.hidden = YES;
     }
     
     if (self.selectBlock) {
@@ -214,9 +179,64 @@ static CGFloat const kFeatureViewDistance = 60;
     }
 }
 
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (_style == DSLIndexViewStyleWave) {
+        for (NSInteger i = 0; i < _indexCount; i++) {
+            [self moveIndex:i toValue:0];
+        }
+    } else if (_style == DSLIndexViewStyleFeatureRound) {
+        _featureView.hidden = YES;
+    }
+}
+
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
 {
     ;
+}
+
+- (void)pan:(UIPanGestureRecognizer *)pan
+{
+    CGPoint local = [pan locationInView:self];
+    NSInteger index = local.y / _labelWidth;
+    
+    switch (pan.state) {
+        case UIGestureRecognizerStateBegan:
+        case UIGestureRecognizerStateChanged: {
+            if (_style == DSLIndexViewStyleWave) {
+                [self waveForTouchMoveWithIndex:index];
+            } else if (_style == DSLIndexViewStyleFeatureRound) {
+                [self featureForTouchBeginWithIndex:index];
+            }
+            
+            if (self.selectBlock) {
+                if (index >= 0 && index < _indexCount) {
+                    self.selectBlock(index);
+                } else if (index < 0) {
+                    self.selectBlock(0);
+                } else if (index >= _indexCount) {
+                    self.selectBlock(_indexCount - 1);
+                }
+            }
+        }
+            break;
+        case UIGestureRecognizerStateEnded: {
+            if (_style == DSLIndexViewStyleWave) {
+                for (NSInteger i = 0; i < _indexCount; i++) {
+                    [self moveIndex:i toValue:0];
+                }
+            } else if (_style == DSLIndexViewStyleFeatureRound) {
+                _featureView.hidden = YES;
+            }
+        }
+            break;
+        case UIGestureRecognizerStateCancelled: {
+            ;
+        }
+            break;
+        default:
+            break;
+    }
 }
 
 #pragma mark - Wave method
@@ -296,7 +316,7 @@ static CGFloat const kFeatureViewDistance = 60;
     }
 }
 
-#pragma mark - Move
+#pragma mark - Move Animation
 
 - (void)moveIndex:(NSInteger)index toValue:(CGFloat)toValue
 {
@@ -311,7 +331,7 @@ static CGFloat const kFeatureViewDistance = 60;
     group.animations = @[translation];
     group.fillMode = kCAFillModeForwards;
     group.removedOnCompletion = NO;
-    group.duration = 0.3;
+    group.duration = kAnimationDuration * (-kMaxMoveDistance - label.dsl_fromValue) / (-kMaxMoveDistance);
     
     [label.layer addAnimation:group forKey:@"label"];
     
@@ -332,17 +352,10 @@ static CGFloat const kFeatureViewDistance = 60;
 
 - (void)featureForTouchBeginWithIndex:(NSInteger)index
 {
-    if (index < 0 || index >= 26) {
+    if (index < 0 || index >= _indexCount) {
         return;
     }
-    _featureView.hidden = YES;
-    
-    UILabel *label = _labels[index];
-    CGPoint center = label.center;
-    center.x = center.x - kFeatureViewDistance;
-    _featureView.center = center;
     _featureView.text = _indexTitles[index];
-    
     _featureView.hidden = NO;
 }
 

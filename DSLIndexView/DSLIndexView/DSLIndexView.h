@@ -6,15 +6,8 @@
 //  Copyright © 2016年 dengshunlai. All rights reserved.
 //
 
-/*********************************************************************************
- *
- * 支持autoLayout，支持xib、storyboard
- *
- * 感谢您的使用！
- *
- *********************************************************************************/
-
 #import <UIKit/UIKit.h>
+#import "DSLIndexFeatureView.h"
 
 typedef void (^DSLIndexViewSelectBlock)(NSInteger index);
 
@@ -54,6 +47,8 @@ typedef NS_ENUM(NSInteger, DSLIndexViewStyle) {
  *  索引条建议高度
  */
 @property (nonatomic, assign, readonly) CGFloat fitHeight;
+
+@property (nonatomic, strong) DSLIndexFeatureView *featureView;
 
 /**
  *  便利构造器
