@@ -8,6 +8,7 @@
 
 #import "DSLIndexView.h"
 #import "UILabel+DSLIndexView.h"
+#import <UIKit/UIGestureRecognizerSubclass.h>
 
 static NSInteger const kIndexViewStyle = DSLIndexViewStyleWave;
 static CGFloat const kFontSize = 14;
@@ -80,8 +81,8 @@ static CGFloat const kAnimationDuration = 0.1;
     [self createIndexLabel];
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
     [self addGestureRecognizer:pan];
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
-    [self addGestureRecognizer:tap];
+//    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
+//    [self addGestureRecognizer:tap];
 }
 
 - (void)tap:(UITapGestureRecognizer *)sender
@@ -178,6 +179,13 @@ static CGFloat const kAnimationDuration = 0.1;
         }
     }
 }
+
+//- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+//{
+//    UITouch *touch = [touches anyObject];
+//    NSLog(@"%@",touch.gestureRecognizers);
+//    NSLog(@"%s",__func__);
+//}
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {

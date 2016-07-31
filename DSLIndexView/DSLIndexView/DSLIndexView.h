@@ -34,7 +34,7 @@ typedef NS_ENUM(NSInteger, DSLIndexViewStyle) {
 @property (nonatomic, assign) DSLIndexViewStyle style;
 
 /**
- *  字体大小，默认12，字体越大，索引条越宽
+ *  字体大小，默认14，字体越大，索引条越宽
  */
 @property (nonatomic, assign) CGFloat fontSize;
 

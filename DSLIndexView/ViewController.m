@@ -22,14 +22,21 @@
     [super viewDidLoad];
     
     _indexs = @[].mutableCopy;
-    for (int i = 0; i <= 26; i++) {
+    for (int i = 0; i < 26; i++) {
         char c = 'a' + i;
         char str[2] = {c,'\0'};
         NSString *string = [NSString stringWithCString:str encoding:NSUTF8StringEncoding];
         [_indexs addObject:string];
     }
     
-    [_tableView dsl_setupIndexViewWithIndexs:_indexs style:DSLIndexViewStyleFeatureRound];
+    [_tableView dsl_setupIndexViewWithIndexs:_indexs];
+    
+    [self addObserver:self forKeyPath:@"tableView.panGestureRecognizer.state" options:0 context:nil];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    NSLog(@"%ld",_tableView.panGestureRecognizer.state);
 }
 
 - (void)didReceiveMemoryWarning {

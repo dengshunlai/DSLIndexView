@@ -68,11 +68,12 @@ static CGFloat const kFeatureRoundSize = 50;
 
 - (void)dsl_setupIndexViewWithIndexs:(NSArray *)indexs style:(DSLIndexViewStyle)style
 {
-    [self addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionInitial context:dsl_indexViewContext];
     self.dsl_indexView = [DSLIndexView indexViewWithIndexTitles:indexs style:style];
     [self.dsl_indexView didSelectIndexWithCallBack:^(NSInteger index) {
         if (index < self.numberOfSections) {
-            [self scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:index] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+            [self scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:index]
+                        atScrollPosition:UITableViewScrollPositionTop
+                                animated:NO];
         }
     }];
     [self.dsl_indexContainerView addSubview:self.dsl_indexView];
@@ -139,6 +140,7 @@ static CGFloat const kFeatureRoundSize = 50;
                                                         multiplier:1
                                                           constant:kFeatureRoundSize]];
     }
+    [self addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionInitial context:dsl_indexViewContext];
 }
 
 #pragma mark - KVO
@@ -151,5 +153,24 @@ static CGFloat const kFeatureRoundSize = 50;
         [self bringSubviewToFront:self.dsl_indexView.featureView];
     }
 }
+
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
+{
+    if (self.decelerating) {
+        CGFloat x = point.x;
+        if (x >= self.frame.size.width - self.dsl_indexContainerView.frame.size.width) {
+            self.scrollEnabled = NO;
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                self.scrollEnabled = YES;
+            });
+        }
+    }
+    return YES;
+}
+
+//- (void)dealloc
+//{
+//    ;
+//}
 
 @end
