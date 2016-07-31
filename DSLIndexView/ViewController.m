@@ -30,13 +30,6 @@
     }
     
     [_tableView dsl_setupIndexViewWithIndexs:_indexs];
-    
-    [self addObserver:self forKeyPath:@"tableView.panGestureRecognizer.state" options:0 context:nil];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
-{
-    NSLog(@"%ld",_tableView.panGestureRecognizer.state);
 }
 
 - (void)didReceiveMemoryWarning {

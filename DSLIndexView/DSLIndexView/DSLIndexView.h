@@ -19,19 +19,9 @@ typedef NS_ENUM(NSInteger, DSLIndexViewStyle) {
 @interface DSLIndexView : UIView
 
 /**
- *  索引字
- */
-@property (nonatomic, strong) NSArray *indexTitles;
-
-/**
  *  索引字颜色  //FIXME
  */
 @property (nonatomic, strong, readonly) UIColor *indexColor;
-
-/**
- *  索引条的风格
- */
-@property (nonatomic, assign) DSLIndexViewStyle style;
 
 /**
  *  字体大小，默认14，字体越大，索引条越宽
@@ -48,7 +38,15 @@ typedef NS_ENUM(NSInteger, DSLIndexViewStyle) {
  */
 @property (nonatomic, assign, readonly) CGFloat fitHeight;
 
-@property (nonatomic, strong) DSLIndexFeatureView *featureView;
+/**
+ *  DSLIndexViewStyleFeatureRound风格中的特写view
+ */
+@property (nonatomic, strong, readonly) DSLIndexFeatureView *featureView;
+
+/**
+ *  作为KVO观察者时的回调block
+ */
+@property (nonatomic, copy) void (^observerBlock)(DSLIndexView *indexView);
 
 /**
  *  便利构造器
@@ -61,7 +59,7 @@ typedef NS_ENUM(NSInteger, DSLIndexViewStyle) {
 + (instancetype)indexViewWithIndexTitles:(NSArray *)indexTitles style:(DSLIndexViewStyle)style;
 
 /**
- *  点击，放手后触发的block
+ *  选中索引字后触发的block
  *
  *  @param selectBlock block
  */

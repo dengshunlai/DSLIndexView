@@ -20,16 +20,6 @@ typedef NS_ENUM(NSInteger, DSLIndexFeatureViewStyle) {
 @property (nonatomic, strong) NSString *text;
 
 /**
- *  文本颜色
- */
-@property (nonatomic, strong) UIColor *textColor;
-
-/**
- *  特写风格
- */
-@property (nonatomic, assign) DSLIndexFeatureViewStyle style;
-
-/**
  *  便利构造器
  *
  *  @param frame 大小

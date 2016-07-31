@@ -9,8 +9,6 @@
 #import "UITableView+DSLIndexView.h"
 #import <objc/runtime.h>
 
-static void *dsl_indexViewContext = &dsl_indexViewContext;
-
 static CGFloat const kFeatureRoundSize = 50;
 
 @interface UITableView ()
@@ -49,14 +47,14 @@ static CGFloat const kFeatureRoundSize = 50;
     objc_setAssociatedObject(self, @selector(dsl_indexView), dsl_indexView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-- (NSArray *)dsl_indexs
+- (DSLIndexViewSelectBlock)dsl_didSelectIndexBlock
 {
-    return objc_getAssociatedObject(self, @selector(dsl_indexs));
+    return objc_getAssociatedObject(self, @selector(dsl_didSelectIndexBlock));
 }
 
-- (void)setDsl_indexs:(NSArray *)dsl_indexs
+- (void)setDsl_didSelectIndexBlock:(DSLIndexViewSelectBlock)dsl_didSelectIndexBlock
 {
-    objc_setAssociatedObject(self, @selector(dsl_indexs), dsl_indexs, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(dsl_didSelectIndexBlock), dsl_didSelectIndexBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
 #pragma mark - instance method
@@ -68,12 +66,17 @@ static CGFloat const kFeatureRoundSize = 50;
 
 - (void)dsl_setupIndexViewWithIndexs:(NSArray *)indexs style:(DSLIndexViewStyle)style
 {
+    __weak typeof(self) weakSelf = self;
     self.dsl_indexView = [DSLIndexView indexViewWithIndexTitles:indexs style:style];
     [self.dsl_indexView didSelectIndexWithCallBack:^(NSInteger index) {
-        if (index < self.numberOfSections) {
-            [self scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:index]
-                        atScrollPosition:UITableViewScrollPositionTop
-                                animated:NO];
+        if (weakSelf.dsl_didSelectIndexBlock) {
+            weakSelf.dsl_didSelectIndexBlock(index);
+        } else {
+            if (index < weakSelf.numberOfSections) {
+                [weakSelf scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:index]
+                                atScrollPosition:UITableViewScrollPositionTop
+                                        animated:NO];
+            }
         }
     }];
     [self.dsl_indexContainerView addSubview:self.dsl_indexView];
@@ -140,20 +143,16 @@ static CGFloat const kFeatureRoundSize = 50;
                                                         multiplier:1
                                                           constant:kFeatureRoundSize]];
     }
-    [self addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionInitial context:dsl_indexViewContext];
+    [self addObserver:self.dsl_indexView forKeyPath:@"bounds" options:NSKeyValueObservingOptionInitial context:nil];
+    [self.dsl_indexView setObserverBlock:^(DSLIndexView *indexView) {
+        weakSelf.dsl_indexContainerView.frame = CGRectMake(weakSelf.bounds.size.width - indexView.fitWidth, weakSelf.bounds.origin.y, indexView.fitWidth, weakSelf.bounds.size.height);
+        [weakSelf bringSubviewToFront:weakSelf.dsl_indexContainerView];
+        [weakSelf bringSubviewToFront:indexView.featureView];
+    }];
 }
 
-#pragma mark - KVO
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
-{
-    if (context == dsl_indexViewContext) {
-        self.dsl_indexContainerView.frame = CGRectMake(self.bounds.size.width - self.dsl_indexView.fitWidth, self.bounds.origin.y, self.dsl_indexView.fitWidth, self.bounds.size.height);
-        [self bringSubviewToFront:self.dsl_indexContainerView];
-        [self bringSubviewToFront:self.dsl_indexView.featureView];
-    }
-}
-
+#pragma mark - hit test
+#pragma mark - warn categpory override subclass override
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
     if (self.decelerating) {
@@ -168,9 +167,13 @@ static CGFloat const kFeatureRoundSize = 50;
     return YES;
 }
 
-//- (void)dealloc
-//{
-//    ;
-//}
+#pragma mark - view hierarchy
+#pragma mark - warn categpory override subclass override
+- (void)willMoveToSuperview:(UIView *)newSuperview
+{
+    if (!newSuperview) {
+        [self removeObserver:self.dsl_indexView forKeyPath:@"bounds"];
+    }
+}
 
 @end

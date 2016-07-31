@@ -15,4 +15,6 @@
 
 - (void)dsl_setupIndexViewWithIndexs:(NSArray *)indexs style:(DSLIndexViewStyle)style;
 
+@property (copy, nonatomic) DSLIndexViewSelectBlock dsl_didSelectIndexBlock;
+
 @end

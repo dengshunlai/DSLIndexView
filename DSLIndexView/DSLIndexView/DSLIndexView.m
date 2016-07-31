@@ -8,7 +8,6 @@
 
 #import "DSLIndexView.h"
 #import "UILabel+DSLIndexView.h"
-#import <UIKit/UIGestureRecognizerSubclass.h>
 
 static NSInteger const kIndexViewStyle = DSLIndexViewStyleWave;
 static CGFloat const kFontSize = 14;
@@ -20,10 +19,11 @@ static CGFloat const kAnimationDuration = 0.1;
 @interface DSLIndexView ()
 
 @property (nonatomic, strong) NSMutableArray *labels;
-
+@property (nonatomic, strong) NSArray *indexTitles;
 @property (nonatomic, assign) CGFloat labelWidth;
 @property (nonatomic, assign) NSInteger index;
 @property (nonatomic, assign) NSInteger indexCount;
+@property (nonatomic, assign) DSLIndexViewStyle style;
 @property (nonatomic, copy) DSLIndexViewSelectBlock selectBlock;
 
 @end
@@ -72,6 +72,11 @@ static CGFloat const kAnimationDuration = 0.1;
     _labelWidth = kLabelWidth;
 }
 
+- (void)dealloc
+{
+    ;
+}
+
 #pragma mark - Set method
 
 - (void)setIndexTitles:(NSArray *)indexTitles
@@ -81,13 +86,6 @@ static CGFloat const kAnimationDuration = 0.1;
     [self createIndexLabel];
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
     [self addGestureRecognizer:pan];
-//    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
-//    [self addGestureRecognizer:tap];
-}
-
-- (void)tap:(UITapGestureRecognizer *)sender
-{
-    NSLog(@"%s",__func__);
 }
 
 - (void)setStyle:(DSLIndexViewStyle)style
@@ -104,7 +102,6 @@ static CGFloat const kAnimationDuration = 0.1;
 - (void)setFontSize:(CGFloat)fontSize
 {
     if (_fontSize != fontSize) {
-        
         _fontSize = fontSize;
         _labelWidth = kFontSize + 3;
     }
@@ -179,13 +176,6 @@ static CGFloat const kAnimationDuration = 0.1;
         }
     }
 }
-
-//- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-//{
-//    UITouch *touch = [touches anyObject];
-//    NSLog(@"%@",touch.gestureRecognizers);
-//    NSLog(@"%s",__func__);
-//}
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
@@ -365,6 +355,15 @@ static CGFloat const kAnimationDuration = 0.1;
     }
     _featureView.text = _indexTitles[index];
     _featureView.hidden = NO;
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if (self.observerBlock) {
+        self.observerBlock(self);
+    }
 }
 
 @end

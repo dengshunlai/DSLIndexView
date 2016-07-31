@@ -9,13 +9,13 @@
 #import "DSLIndexFeatureView.h"
 
 static NSInteger const kIndexFeatureViewStyle = DSLIndexFeatureViewStyleRound;
-
 static CGFloat const kFontSize = 20;
-
 static CGFloat const kTextLabelSize = kFontSize + 5;
 
 @interface DSLIndexFeatureView ()
 
+@property (nonatomic, assign) DSLIndexFeatureViewStyle style;
+@property (nonatomic, strong) UIColor *textColor;
 @property (nonatomic, strong) UILabel *textLabel;
 
 @end
@@ -82,14 +82,6 @@ static CGFloat const kTextLabelSize = kFontSize + 5;
 {
     _text = text;
     _textLabel.text = _text;
-}
-
-- (void)setStyle:(DSLIndexFeatureViewStyle)style
-{
-    if (_style != style) {
-        _style = style;
-        [self setNeedsDisplay];
-    }
 }
 
 - (void)createTextLabel
