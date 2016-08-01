@@ -54,11 +54,6 @@
     return [UITableViewCell new];
 }
 
-//- (NSArray<NSString *> *)sectionIndexTitlesForTableView:(UITableView *)tableView
-//{
-//    return _indexs;
-//}
-
 #pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)displayCell forRowAtIndexPath:(NSIndexPath *)indexPath

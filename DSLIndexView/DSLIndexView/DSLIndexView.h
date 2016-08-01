@@ -19,11 +19,6 @@ typedef NS_ENUM(NSInteger, DSLIndexViewStyle) {
 @interface DSLIndexView : UIView
 
 /**
- *  索引字颜色  //FIXME
- */
-@property (nonatomic, strong, readonly) UIColor *indexColor;
-
-/**
  *  字体大小，默认14，字体越大，索引条越宽
  */
 @property (nonatomic, assign) CGFloat fontSize;

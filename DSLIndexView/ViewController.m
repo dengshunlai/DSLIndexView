@@ -29,7 +29,11 @@
         [_indexs addObject:string];
     }
     
+    //安装索引条
     [_tableView dsl_setupIndexViewWithIndexs:_indexs];
+    
+    //设置字体大小
+    //[_tableView dsl_setIndexFontSize:10];
 }
 
 - (void)didReceiveMemoryWarning {

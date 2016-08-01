@@ -20,6 +20,7 @@ static CGFloat const kAnimationDuration = 0.1;
 
 @property (nonatomic, strong) NSMutableArray *labels;
 @property (nonatomic, strong) NSArray *indexTitles;
+@property (nonatomic, strong) UIColor *indexColor;
 @property (nonatomic, assign) CGFloat labelWidth;
 @property (nonatomic, assign) NSInteger index;
 @property (nonatomic, assign) NSInteger indexCount;
@@ -103,7 +104,13 @@ static CGFloat const kAnimationDuration = 0.1;
 {
     if (_fontSize != fontSize) {
         _fontSize = fontSize;
-        _labelWidth = kFontSize + 3;
+        _labelWidth = fontSize + 3;
+        _fitWidth = _labelWidth + kLeftRightEdge * 2;
+        _fitHeight = _labelWidth * _indexTitles.count;
+        [_labels enumerateObjectsUsingBlock:^(UILabel *label, NSUInteger idx, BOOL * stop) {
+            label.font = [UIFont systemFontOfSize:_fontSize];
+            label.frame = CGRectMake(kLeftRightEdge, _labelWidth * idx, _labelWidth, _labelWidth);
+        }];
     }
 }
 

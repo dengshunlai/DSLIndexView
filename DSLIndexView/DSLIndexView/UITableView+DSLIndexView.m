@@ -15,6 +15,8 @@ static CGFloat const kFeatureRoundSize = 50;
 
 @property (strong, nonatomic) UIView *dsl_indexContainerView;
 @property (strong, nonatomic) DSLIndexView *dsl_indexView;
+@property (strong, nonatomic) NSArray *dsl_indexViewWidthHeightConstraints;
+@property (copy, nonatomic) DSLIndexViewSelectBlock dsl_didSelectIndexBlock;
 
 @end
 
@@ -57,6 +59,16 @@ static CGFloat const kFeatureRoundSize = 50;
     objc_setAssociatedObject(self, @selector(dsl_didSelectIndexBlock), dsl_didSelectIndexBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
+- (NSArray *)dsl_indexViewWidthHeightConstraints
+{
+    return objc_getAssociatedObject(self, @selector(dsl_indexViewWidthHeightConstraints));
+}
+
+- (void)setDsl_indexViewWidthHeightConstraints:(NSArray *)dsl_indexViewWidthHeightConstraints
+{
+    objc_setAssociatedObject(self, @selector(dsl_indexViewWidthHeightConstraints), dsl_indexViewWidthHeightConstraints, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
 #pragma mark - instance method
 
 - (void)dsl_setupIndexViewWithIndexs:(NSArray *)indexs
@@ -95,20 +107,23 @@ static CGFloat const kFeatureRoundSize = 50;
                                                                             attribute:NSLayoutAttributeCenterY
                                                                            multiplier:1
                                                                              constant:0]];
-    [self.dsl_indexContainerView addConstraint:[NSLayoutConstraint constraintWithItem:self.dsl_indexView
-                                                                            attribute:NSLayoutAttributeWidth
-                                                                            relatedBy:0
-                                                                               toItem:nil
-                                                                            attribute:0
-                                                                           multiplier:1
-                                                                             constant:self.dsl_indexView.fitWidth]];
-    [self.dsl_indexContainerView addConstraint:[NSLayoutConstraint constraintWithItem:self.dsl_indexView
-                                                                            attribute:NSLayoutAttributeHeight
-                                                                            relatedBy:0
-                                                                               toItem:nil
-                                                                            attribute:0
-                                                                           multiplier:1
-                                                                             constant:self.dsl_indexView.fitHeight]];
+    NSMutableArray *temp = @[].mutableCopy;
+    [temp addObject:[NSLayoutConstraint constraintWithItem:self.dsl_indexView
+                                                attribute:NSLayoutAttributeWidth
+                                                relatedBy:0
+                                                   toItem:nil
+                                                attribute:0
+                                               multiplier:1
+                                                  constant:self.dsl_indexView.fitWidth]];
+    [temp addObject:[NSLayoutConstraint constraintWithItem:self.dsl_indexView
+                                                attribute:NSLayoutAttributeHeight
+                                                relatedBy:0
+                                                   toItem:nil
+                                                attribute:0
+                                               multiplier:1
+                                                  constant:self.dsl_indexView.fitHeight]];
+    [self.dsl_indexContainerView addConstraints:temp];
+    self.dsl_indexViewWidthHeightConstraints = temp;
     [self addSubview:self.dsl_indexContainerView];
     
     if (style == DSLIndexViewStyleFeatureRound) {
@@ -151,8 +166,31 @@ static CGFloat const kFeatureRoundSize = 50;
     }];
 }
 
+- (void)dsl_setIndexFontSize:(CGFloat)fontSize
+{
+    self.dsl_indexView.fontSize = fontSize;
+    [self.dsl_indexContainerView removeConstraints:self.dsl_indexViewWidthHeightConstraints];
+    NSMutableArray *temp = @[].mutableCopy;
+    [temp addObject:[NSLayoutConstraint constraintWithItem:self.dsl_indexView
+                                                 attribute:NSLayoutAttributeWidth
+                                                 relatedBy:0
+                                                    toItem:nil
+                                                 attribute:0
+                                                multiplier:1
+                                                  constant:self.dsl_indexView.fitWidth]];
+    [temp addObject:[NSLayoutConstraint constraintWithItem:self.dsl_indexView
+                                                 attribute:NSLayoutAttributeHeight
+                                                 relatedBy:0
+                                                    toItem:nil
+                                                 attribute:0
+                                                multiplier:1
+                                                  constant:self.dsl_indexView.fitHeight]];
+    [self.dsl_indexContainerView addConstraints:temp];
+    self.dsl_indexViewWidthHeightConstraints = temp;
+}
+
 #pragma mark - hit test
-#pragma mark - warn categpory override subclass override
+#pragma mark - warn categpory/subclass override
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
     if (self.decelerating) {
@@ -168,7 +206,7 @@ static CGFloat const kFeatureRoundSize = 50;
 }
 
 #pragma mark - view hierarchy
-#pragma mark - warn categpory override subclass override
+#pragma mark - warn categpory/subclass override
 - (void)willMoveToSuperview:(UIView *)newSuperview
 {
     if (!newSuperview) {
