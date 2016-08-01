@@ -27,7 +27,7 @@
 - (void)dsl_setupIndexViewWithIndexs:(NSArray *)indexs style:(DSLIndexViewStyle)style;
 
 /**
- *  设置索引字的字体大小
+ *  设置索引字的字体大小，默认14
  *
  *  @param fontSize 字体大小
  */
