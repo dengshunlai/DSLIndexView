@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D635D0471D4890690084E5F6 /* UITableView+DSLIndexView.m in Sources */ = {isa = PBXBuildFile; fileRef = D635D0461D4890690084E5F6 /* UITableView+DSLIndexView.m */; };
 		D6BDCD361D4B5CBF00EF2DB5 /* FeatureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D6BDCD351D4B5CBF00EF2DB5 /* FeatureViewController.m */; };
+		DD03D0F11DB791A000817E51 /* WaveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD03D0F01DB791A000817E51 /* WaveViewController.m */; };
 		DDE085DA1D450F6B00CD5B88 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE085D91D450F6B00CD5B88 /* main.m */; };
 		DDE085DD1D450F6B00CD5B88 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE085DC1D450F6B00CD5B88 /* AppDelegate.m */; };
 		DDE085E01D450F6B00CD5B88 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DDE085DF1D450F6B00CD5B88 /* ViewController.m */; };
@@ -44,6 +45,8 @@
 		D635D0461D4890690084E5F6 /* UITableView+DSLIndexView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+DSLIndexView.m"; sourceTree = "<group>"; };
 		D6BDCD341D4B5CBF00EF2DB5 /* FeatureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureViewController.h; sourceTree = "<group>"; };
 		D6BDCD351D4B5CBF00EF2DB5 /* FeatureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeatureViewController.m; sourceTree = "<group>"; };
+		DD03D0EF1DB791A000817E51 /* WaveViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveViewController.h; sourceTree = "<group>"; };
+		DD03D0F01DB791A000817E51 /* WaveViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WaveViewController.m; sourceTree = "<group>"; };
 		DDE085D51D450F6B00CD5B88 /* DSLIndexView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DSLIndexView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE085D91D450F6B00CD5B88 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DDE085DB1D450F6B00CD5B88 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -96,7 +99,7 @@
 		DDE085CC1D450F6B00CD5B88 = {
 			isa = PBXGroup;
 			children = (
-				DDE085D71D450F6B00CD5B88 /* DSLIndexView */,
+				DDE085D71D450F6B00CD5B88 /* DSLIndexViewDemo */,
 				DDE085F11D450F6B00CD5B88 /* DSLIndexViewTests */,
 				DDE085FC1D450F6B00CD5B88 /* DSLIndexViewUITests */,
 				DDE085D61D450F6B00CD5B88 /* Products */,
@@ -113,7 +116,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		DDE085D71D450F6B00CD5B88 /* DSLIndexView */ = {
+		DDE085D71D450F6B00CD5B88 /* DSLIndexViewDemo */ = {
 			isa = PBXGroup;
 			children = (
 				DDE0860B1D450FBF00CD5B88 /* DSLIndexView */,
@@ -121,6 +124,8 @@
 				DDE085DC1D450F6B00CD5B88 /* AppDelegate.m */,
 				DDE085DE1D450F6B00CD5B88 /* ViewController.h */,
 				DDE085DF1D450F6B00CD5B88 /* ViewController.m */,
+				DD03D0EF1DB791A000817E51 /* WaveViewController.h */,
+				DD03D0F01DB791A000817E51 /* WaveViewController.m */,
 				D6BDCD341D4B5CBF00EF2DB5 /* FeatureViewController.h */,
 				D6BDCD351D4B5CBF00EF2DB5 /* FeatureViewController.m */,
 				DDE085E11D450F6B00CD5B88 /* Main.storyboard */,
@@ -129,7 +134,7 @@
 				DDE085E91D450F6B00CD5B88 /* Info.plist */,
 				DDE085D81D450F6B00CD5B88 /* Supporting Files */,
 			);
-			path = DSLIndexView;
+			path = DSLIndexViewDemo;
 			sourceTree = "<group>";
 		};
 		DDE085D81D450F6B00CD5B88 /* Supporting Files */ = {
@@ -240,6 +245,7 @@
 				TargetAttributes = {
 					DDE085D41D450F6B00CD5B88 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = QTRV8G9WAU;
 					};
 					DDE085ED1D450F6B00CD5B88 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -303,6 +309,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD03D0F11DB791A000817E51 /* WaveViewController.m in Sources */,
 				DDE085E01D450F6B00CD5B88 /* ViewController.m in Sources */,
 				D635D0471D4890690084E5F6 /* UITableView+DSLIndexView.m in Sources */,
 				DDE086111D45101100CD5B88 /* UILabel+DSLIndexView.m in Sources */,
@@ -453,7 +460,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = DSLIndexView/Info.plist;
+				DEVELOPMENT_TEAM = QTRV8G9WAU;
+				INFOPLIST_FILE = DSLIndexViewDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dsl.DSLIndexView;
@@ -465,7 +473,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = DSLIndexView/Info.plist;
+				DEVELOPMENT_TEAM = QTRV8G9WAU;
+				INFOPLIST_FILE = DSLIndexViewDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dsl.DSLIndexView;

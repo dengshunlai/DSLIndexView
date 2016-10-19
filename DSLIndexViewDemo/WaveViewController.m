@@ -1,22 +1,22 @@
 //
-//  ViewController.m
+//  WaveViewController.m
 //  DSLIndexView
 //
-//  Created by 邓顺来 on 16/7/24.
+//  Created by 邓顺来 on 16/10/19.
 //  Copyright © 2016年 邓顺来. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "WaveViewController.h"
 #import "UITableView+DSLIndexView.h"
 
-@interface ViewController () <UITableViewDataSource,UITableViewDelegate>
+@interface WaveViewController () <UITableViewDataSource,UITableViewDelegate>
 
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) NSMutableArray *indexs;
 
 @end
 
-@implementation ViewController
+@implementation WaveViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -29,16 +29,31 @@
         [_indexs addObject:string];
     }
     
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
+                                                               0,
+                                                               [UIScreen mainScreen].bounds.size.width,
+                                                               [UIScreen mainScreen].bounds.size.height)
+                                              style:UITableViewStylePlain];
+    _tableView.delegate = self;
+    _tableView.dataSource = self;
+    
     //安装索引条
     [_tableView dsl_setupIndexViewWithIndexs:_indexs];
     
     //设置字体大小
     //[_tableView dsl_setIndexFontSize:10];
+    
+    [self.view addSubview:_tableView];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)dealloc
+{
+    NSLog(@"%s",__func__);
 }
 
 #pragma mark - UITableViewDataSource

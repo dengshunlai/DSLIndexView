@@ -158,12 +158,18 @@ static CGFloat const kFeatureRoundSize = 50;
                                                         multiplier:1
                                                           constant:kFeatureRoundSize]];
     }
-    [self addObserver:self.dsl_indexView forKeyPath:@"bounds" options:NSKeyValueObservingOptionInitial context:nil];
     [self.dsl_indexView setObserverBlock:^(DSLIndexView *indexView) {
         weakSelf.dsl_indexContainerView.frame = CGRectMake(weakSelf.bounds.size.width - indexView.fitWidth, weakSelf.bounds.origin.y, indexView.fitWidth, weakSelf.bounds.size.height);
         [weakSelf bringSubviewToFront:weakSelf.dsl_indexContainerView];
         [weakSelf bringSubviewToFront:indexView.featureView];
     }];
+    if (self.superview) {
+        [self addObserver:self.dsl_indexView forKeyPath:@"bounds" options:NSKeyValueObservingOptionInitial context:nil];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self bringSubviewToFront:self.dsl_indexContainerView];
+            [self bringSubviewToFront:self.dsl_indexView.featureView];
+        });
+    }
 }
 
 - (void)dsl_setIndexFontSize:(CGFloat)fontSize
@@ -193,7 +199,7 @@ static CGFloat const kFeatureRoundSize = 50;
 #pragma mark - warn categpory/subclass override
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
-    if (self.decelerating) {
+    if (self.dsl_indexView && self.decelerating) {
         CGFloat x = point.x;
         if (x >= self.frame.size.width - self.dsl_indexContainerView.frame.size.width) {
             self.scrollEnabled = NO;
@@ -209,8 +215,16 @@ static CGFloat const kFeatureRoundSize = 50;
 #pragma mark - warn categpory/subclass override
 - (void)willMoveToSuperview:(UIView *)newSuperview
 {
-    if (!newSuperview) {
-        [self removeObserver:self.dsl_indexView forKeyPath:@"bounds"];
+    if (self.dsl_indexView) {
+        if (!newSuperview) {
+            [self removeObserver:self.dsl_indexView forKeyPath:@"bounds"];
+        } else {
+            [self addObserver:self.dsl_indexView forKeyPath:@"bounds" options:NSKeyValueObservingOptionInitial context:nil];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self bringSubviewToFront:self.dsl_indexContainerView];
+                [self bringSubviewToFront:self.dsl_indexView.featureView];
+            });
+        }
     }
 }
 

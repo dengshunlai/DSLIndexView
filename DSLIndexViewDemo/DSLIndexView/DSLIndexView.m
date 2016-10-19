@@ -75,7 +75,7 @@ static CGFloat const kAnimationDuration = 0.1;
 
 - (void)dealloc
 {
-    ;
+    //NSLog(@"%s",__func__);
 }
 
 #pragma mark - Set method
