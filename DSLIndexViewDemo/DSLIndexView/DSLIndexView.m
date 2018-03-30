@@ -9,22 +9,20 @@
 #import "DSLIndexView.h"
 #import "UILabel+DSLIndexView.h"
 
-static NSInteger const kIndexViewStyle = DSLIndexViewStyleWave;
 static CGFloat const kFontSize = 14;
 static CGFloat const kLabelWidth = kFontSize + 3;
 static CGFloat const kMaxMoveDistance = -55;
 static CGFloat const kLeftRightEdge = 3;
 static CGFloat const kAnimationDuration = 0.1;
+static CGFloat const kFeatureViewSize = 55;
 
 @interface DSLIndexView ()
 
 @property (nonatomic, strong) NSMutableArray *labels;
-@property (nonatomic, strong) NSArray *indexTitles;
 @property (nonatomic, strong) UIColor *indexColor;
 @property (nonatomic, assign) CGFloat labelWidth;
 @property (nonatomic, assign) NSInteger index;
 @property (nonatomic, assign) NSInteger indexCount;
-@property (nonatomic, assign) DSLIndexViewStyle style;
 @property (nonatomic, copy) DSLIndexViewSelectBlock selectBlock;
 
 @end
@@ -52,13 +50,10 @@ static CGFloat const kAnimationDuration = 0.1;
     return self;
 }
 
-+ (instancetype)indexViewWithIndexTitles:(NSArray *)indexTitles style:(DSLIndexViewStyle)style
++ (instancetype)indexViewWithIndexTitles:(NSArray *)indexTitles
 {
     DSLIndexView *indexView = [[DSLIndexView alloc] init];
-    
     indexView.indexTitles = indexTitles;
-    indexView.style = style;
-    
     return indexView;
 }
 
@@ -66,16 +61,25 @@ static CGFloat const kAnimationDuration = 0.1;
 {
     self.backgroundColor = [UIColor clearColor];
     
-    _style = kIndexViewStyle;
+    _isShowIndexFeature = NO;
     _fontSize = kFontSize;
     _indexColor = [UIColor darkGrayColor];
     _labels = [NSMutableArray array];
     _labelWidth = kLabelWidth;
+    [self createFeatureView];
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
+    [self addGestureRecognizer:pan];
 }
 
 - (void)dealloc
 {
-    //NSLog(@"%s",__func__);
+    [_featureView removeFromSuperview];
+    _featureView = nil;
+    NSLog(@"%s",__func__);
+}
+
+- (CGSize)intrinsicContentSize {
+    return CGSizeMake(_fitWidth, _fitHeight);
 }
 
 #pragma mark - Set method
@@ -85,19 +89,7 @@ static CGFloat const kAnimationDuration = 0.1;
     _indexTitles = indexTitles;
     _indexCount = indexTitles.count;
     [self createIndexLabel];
-    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
-    [self addGestureRecognizer:pan];
-}
-
-- (void)setStyle:(DSLIndexViewStyle)style
-{
-    _style = style;
-    if (_style == DSLIndexViewStyleFeatureRound) {
-        [self createFeatureView];
-    } else if (_style == DSLIndexViewStyleWave) {
-        [_featureView removeFromSuperview];
-        _featureView = nil;
-    }
+    [self invalidateIntrinsicContentSize];
 }
 
 - (void)setFontSize:(CGFloat)fontSize
@@ -111,12 +103,13 @@ static CGFloat const kAnimationDuration = 0.1;
             label.font = [UIFont systemFontOfSize:_fontSize];
             label.frame = CGRectMake(kLeftRightEdge, _labelWidth * idx, _labelWidth, _labelWidth);
         }];
+        [self invalidateIntrinsicContentSize];
     }
 }
 
 #pragma mark - Instance method
 
-- (void)didSelectIndexWithCallBack:(DSLIndexViewSelectBlock)selectBlock
+- (void)setDidSelectIndexWithCallBack:(DSLIndexViewSelectBlock)selectBlock
 {
     self.selectBlock = selectBlock;
 }
@@ -151,12 +144,12 @@ static CGFloat const kAnimationDuration = 0.1;
 
 - (void)createFeatureView
 {
-    DSLIndexFeatureViewStyle featureViewStyle;
-    if (_style == DSLIndexViewStyleFeatureRound) {
-        featureViewStyle = DSLIndexFeatureViewStyleRound;
-    }
-    _featureView = [DSLIndexFeatureView indexFeatureViewWithFrame:CGRectZero style:featureViewStyle];
+    _featureView = [DSLIndexFeatureView indexFeatureViewWithFrame:CGRectZero style:DSLIndexFeatureViewStyleRound];
     _featureView.hidden = YES;
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    [window addSubview:_featureView];
+    _featureView.frame = CGRectMake(0, 0, kFeatureViewSize, kFeatureViewSize);
+    _featureView.center = CGPointMake(CGRectGetWidth(window.frame) / 2, CGRectGetHeight(window.frame) / 2);
 }
 
 #pragma mark - Touch event & PanGestureRecognizer
@@ -167,9 +160,8 @@ static CGFloat const kAnimationDuration = 0.1;
     CGPoint local = [touch locationInView:self];
     NSInteger index = local.y / _labelWidth;
     
-    if (_style == DSLIndexViewStyleWave) {
-        [self waveForTouchBeginWithIndex:index];
-    } else if (_style == DSLIndexViewStyleFeatureRound) {
+    [self waveForTouchBeginWithIndex:index];
+    if (_isShowIndexFeature) {
         [self featureForTouchBeginWithIndex:index];
     }
     
@@ -186,13 +178,10 @@ static CGFloat const kAnimationDuration = 0.1;
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    if (_style == DSLIndexViewStyleWave) {
-        for (NSInteger i = 0; i < _indexCount; i++) {
-            [self moveIndex:i toValue:0];
-        }
-    } else if (_style == DSLIndexViewStyleFeatureRound) {
-        _featureView.hidden = YES;
+    for (NSInteger i = 0; i < _indexCount; i++) {
+        [self moveIndex:i toValue:0];
     }
+    _featureView.hidden = YES;
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
@@ -208,9 +197,8 @@ static CGFloat const kAnimationDuration = 0.1;
     switch (pan.state) {
         case UIGestureRecognizerStateBegan:
         case UIGestureRecognizerStateChanged: {
-            if (_style == DSLIndexViewStyleWave) {
-                [self waveForTouchMoveWithIndex:index];
-            } else if (_style == DSLIndexViewStyleFeatureRound) {
+            [self waveForTouchMoveWithIndex:index];
+            if (_isShowIndexFeature) {
                 [self featureForTouchBeginWithIndex:index];
             }
             
@@ -226,13 +214,10 @@ static CGFloat const kAnimationDuration = 0.1;
         }
             break;
         case UIGestureRecognizerStateEnded: {
-            if (_style == DSLIndexViewStyleWave) {
-                for (NSInteger i = 0; i < _indexCount; i++) {
-                    [self moveIndex:i toValue:0];
-                }
-            } else if (_style == DSLIndexViewStyleFeatureRound) {
-                _featureView.hidden = YES;
+            for (NSInteger i = 0; i < _indexCount; i++) {
+                [self moveIndex:i toValue:0];
             }
+            _featureView.hidden = YES;
         }
             break;
         case UIGestureRecognizerStateCancelled: {
@@ -362,15 +347,6 @@ static CGFloat const kAnimationDuration = 0.1;
     }
     _featureView.text = _indexTitles[index];
     _featureView.hidden = NO;
-}
-
-#pragma mark - KVO
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
-{
-    if (self.observerBlock) {
-        self.observerBlock(self);
-    }
 }
 
 @end

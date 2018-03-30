@@ -7,12 +7,14 @@
 //
 
 #import "WaveViewController.h"
-#import "UITableView+DSLIndexView.h"
+#import "DSLIndexView.h"
 
 @interface WaveViewController () <UITableViewDataSource,UITableViewDelegate>
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) NSMutableArray *indexs;
+
+@property (strong, nonatomic) DSLIndexView *indexView;
 
 @end
 
@@ -36,14 +38,23 @@
                                               style:UITableViewStylePlain];
     _tableView.delegate = self;
     _tableView.dataSource = self;
-    
-    //安装索引条
-    [_tableView dsl_setupIndexViewWithIndexs:_indexs];
-    
-    //设置字体大小
-    //[_tableView dsl_setIndexFontSize:10];
-    
     [self.view addSubview:_tableView];
+    
+    //索引条
+    _indexView = [DSLIndexView indexViewWithIndexTitles:_indexs];
+    __weak typeof(self) weak_self = self;
+    [_indexView setDidSelectIndexWithCallBack:^(NSInteger index) {
+        if (index < weak_self.tableView.numberOfSections) {
+            [weak_self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:index]
+                                       atScrollPosition:UITableViewScrollPositionTop
+                                               animated:NO];
+        }
+    }];
+    [self.view addSubview:_indexView];
+    _indexView.frame = CGRectMake(CGRectGetWidth([UIScreen mainScreen].bounds) - _indexView.fitWidth,
+                                  (CGRectGetHeight([UIScreen mainScreen].bounds) - _indexView.fitHeight) / 2,
+                                  _indexView.fitWidth,
+                                  _indexView.fitHeight);
 }
 
 - (void)didReceiveMemoryWarning {

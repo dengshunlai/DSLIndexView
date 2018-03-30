@@ -7,12 +7,14 @@
 //
 
 #import "FeatureViewController.h"
-#import "UITableView+DSLIndexView.h"
+#import "DSLIndexView.h"
 
 @interface FeatureViewController () <UITableViewDataSource,UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSMutableArray *indexs;
+
+@property (strong, nonatomic) DSLIndexView *indexView;
 
 @end
 
@@ -29,7 +31,22 @@
         [_indexs addObject:string];
     }
     
-    [_tableView dsl_setupIndexViewWithIndexs:_indexs style:DSLIndexViewStyleFeatureRound];
+    //索引条
+    _indexView = [DSLIndexView indexViewWithIndexTitles:_indexs];
+    _indexView.isShowIndexFeature = YES;
+    __weak typeof(self) weak_self = self;
+    [_indexView setDidSelectIndexWithCallBack:^(NSInteger index) {
+        if (index < weak_self.tableView.numberOfSections) {
+            [weak_self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:index]
+                                       atScrollPosition:UITableViewScrollPositionTop
+                                               animated:NO];
+        }
+    }];
+    [self.view addSubview:_indexView];
+    _indexView.frame = CGRectMake(CGRectGetWidth([UIScreen mainScreen].bounds) - _indexView.fitWidth,
+                                  (CGRectGetHeight([UIScreen mainScreen].bounds) - _indexView.fitHeight) / 2,
+                                  _indexView.fitWidth,
+                                  _indexView.fitHeight);
 }
 
 - (void)didReceiveMemoryWarning {

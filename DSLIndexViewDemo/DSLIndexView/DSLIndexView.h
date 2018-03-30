@@ -11,12 +11,12 @@
 
 typedef void (^DSLIndexViewSelectBlock)(NSInteger index);
 
-typedef NS_ENUM(NSInteger, DSLIndexViewStyle) {
-    DSLIndexViewStyleWave,
-    DSLIndexViewStyleFeatureRound
-};
-
 @interface DSLIndexView : UIView
+
+/**
+ *  索引字
+ */
+@property (nonatomic, strong) NSArray *indexTitles;
 
 /**
  *  字体大小，默认14，字体越大，索引条越宽
@@ -34,30 +34,29 @@ typedef NS_ENUM(NSInteger, DSLIndexViewStyle) {
 @property (nonatomic, assign, readonly) CGFloat fitHeight;
 
 /**
- *  DSLIndexViewStyleFeatureRound风格中的特写view
+ *  是否显示索引的特写，默认NO
  */
-@property (nonatomic, strong, readonly) DSLIndexFeatureView *featureView;
+@property (nonatomic, assign) BOOL isShowIndexFeature;
 
 /**
- *  作为KVO观察者时的回调block
+ *  特写的View
  */
-@property (nonatomic, copy) void (^observerBlock)(DSLIndexView *indexView);
+@property (nonatomic, strong, readonly) DSLIndexFeatureView *featureView;
 
 /**
  *  便利构造器
  *
  *  @param indexTitles 索引字
- *  @param style       索引条的风格
  *
  *  @return DSLIndexView
  */
-+ (instancetype)indexViewWithIndexTitles:(NSArray *)indexTitles style:(DSLIndexViewStyle)style;
++ (instancetype)indexViewWithIndexTitles:(NSArray *)indexTitles;
 
 /**
  *  选中索引字后触发的block
  *
  *  @param selectBlock block
  */
-- (void)didSelectIndexWithCallBack:(DSLIndexViewSelectBlock)selectBlock;
+- (void)setDidSelectIndexWithCallBack:(DSLIndexViewSelectBlock)selectBlock;
 
 @end
