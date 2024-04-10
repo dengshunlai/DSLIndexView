@@ -57,8 +57,7 @@ static CGFloat const kFeatureViewSize = 55;
     return indexView;
 }
 
-- (void)initialization
-{
+- (void)initialization {
     self.backgroundColor = [UIColor clearColor];
     
     _isShowIndexFeature = NO;
@@ -66,13 +65,13 @@ static CGFloat const kFeatureViewSize = 55;
     _indexColor = [UIColor darkGrayColor];
     _labels = [NSMutableArray array];
     _labelWidth = kLabelWidth;
+    _index = -1;
     [self createFeatureView];
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
     [self addGestureRecognizer:pan];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     [_featureView removeFromSuperview];
     _featureView = nil;
     NSLog(@"%s",__func__);
@@ -84,16 +83,14 @@ static CGFloat const kFeatureViewSize = 55;
 
 #pragma mark - Set method
 
-- (void)setIndexTitles:(NSArray *)indexTitles
-{
+- (void)setIndexTitles:(NSArray *)indexTitles {
     _indexTitles = indexTitles;
     _indexCount = indexTitles.count;
     [self createIndexLabel];
     [self invalidateIntrinsicContentSize];
 }
 
-- (void)setFontSize:(CGFloat)fontSize
-{
+- (void)setFontSize:(CGFloat)fontSize {
     if (_fontSize != fontSize) {
         _fontSize = fontSize;
         _labelWidth = fontSize + 3;
@@ -109,15 +106,13 @@ static CGFloat const kFeatureViewSize = 55;
 
 #pragma mark - Instance method
 
-- (void)setDidSelectIndexWithCallBack:(DSLIndexViewSelectBlock)selectBlock
-{
+- (void)setDidSelectIndexWithCallBack:(DSLIndexViewSelectBlock)selectBlock {
     self.selectBlock = selectBlock;
 }
 
 #pragma mark - Create UI
 
-- (void)createIndexLabel
-{
+- (void)createIndexLabel {
     [_labels enumerateObjectsUsingBlock:^(UILabel *label, NSUInteger idx, BOOL * stop) {
         [label removeFromSuperview];
     }];
@@ -142,8 +137,7 @@ static CGFloat const kFeatureViewSize = 55;
     }];
 }
 
-- (void)createFeatureView
-{
+- (void)createFeatureView {
     _featureView = [DSLIndexFeatureView indexFeatureViewWithFrame:CGRectZero style:DSLIndexFeatureViewStyleRound];
     _featureView.hidden = YES;
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
@@ -154,74 +148,58 @@ static CGFloat const kFeatureViewSize = 55;
 
 #pragma mark - Touch event & PanGestureRecognizer
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     UITouch *touch = [touches anyObject];
     CGPoint local = [touch locationInView:self];
     NSInteger index = local.y / _labelWidth;
+    if (index < 0) {
+        index = 0;
+    } else if (index >= _indexCount) {
+        index = _indexCount - 1;
+    }
     
     [self waveForTouchBeginWithIndex:index];
     if (_isShowIndexFeature) {
         [self featureForTouchBeginWithIndex:index];
     }
-    
-    if (self.selectBlock) {
-        if (index >= 0 && index < _indexCount) {
-            self.selectBlock(index);
-        } else if (index < 0) {
-            self.selectBlock(0);
-        } else if (index >= _indexCount) {
-            self.selectBlock(_indexCount - 1);
-        }
-    }
+    [self didSelectIndex:index];
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    for (NSInteger i = 0; i < _indexCount; i++) {
-        [self moveIndex:i toValue:0];
-    }
-    _featureView.hidden = YES;
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self resetAllIndexLabel];
 }
 
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    ;
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self resetAllIndexLabel];
 }
 
-- (void)pan:(UIPanGestureRecognizer *)pan
-{
+- (void)pan:(UIPanGestureRecognizer *)pan {
     CGPoint local = [pan locationInView:self];
     NSInteger index = local.y / _labelWidth;
+    if (index < 0) {
+        index = 0;
+    } else if (index >= _indexCount) {
+        index = _indexCount - 1;
+    }
     
     switch (pan.state) {
         case UIGestureRecognizerStateBegan:
         case UIGestureRecognizerStateChanged: {
-            [self waveForTouchMoveWithIndex:index];
-            if (_isShowIndexFeature) {
-                [self featureForTouchBeginWithIndex:index];
-            }
-            
-            if (self.selectBlock) {
-                if (index >= 0 && index < _indexCount) {
-                    self.selectBlock(index);
-                } else if (index < 0) {
-                    self.selectBlock(0);
-                } else if (index >= _indexCount) {
-                    self.selectBlock(_indexCount - 1);
+            if (index != _index) {
+                [self waveForTouchMoveWithIndex:index];
+                if (_isShowIndexFeature) {
+                    [self featureForTouchBeginWithIndex:index];
                 }
+                [self didSelectIndex:index];
             }
         }
             break;
         case UIGestureRecognizerStateEnded: {
-            for (NSInteger i = 0; i < _indexCount; i++) {
-                [self moveIndex:i toValue:0];
-            }
-            _featureView.hidden = YES;
+            [self resetAllIndexLabel];
         }
             break;
         case UIGestureRecognizerStateCancelled: {
-            ;
+            [self resetAllIndexLabel];
         }
             break;
         default:
@@ -229,12 +207,41 @@ static CGFloat const kFeatureViewSize = 55;
     }
 }
 
+- (void)resetAllIndexLabel {
+    for (NSInteger i = 0; i < _indexCount; i++) {
+        [self moveIndex:i toValue:0];
+    }
+    _featureView.hidden = YES;
+    _index = -1;
+}
+
+- (void)didSelectIndex:(NSInteger)index {
+    if (self.selectBlock) {
+        self.selectBlock(index);
+    }
+    _index = index;
+}
+
 #pragma mark - Wave method
 
-- (void)waveForTouchBeginWithIndex:(NSInteger)index
-{
-    if (index >=0 && index < _indexCount) {
-        _index = index;
+- (void)waveForTouchBeginWithIndex:(NSInteger)index {
+    [self moveIndex:index toValue:kMaxMoveDistance];
+    if (index - 1 >= 0) {
+        [self moveIndex:index - 1 toValue:kMaxMoveDistance * 2 / 3];
+    }
+    if (index - 2 >= 0) {
+        [self moveIndex:index - 2 toValue:kMaxMoveDistance / 3];
+    }
+    if (index + 1 < _indexCount) {
+        [self moveIndex:index + 1 toValue:kMaxMoveDistance * 2 / 3];
+    }
+    if (index + 2 < _indexCount) {
+        [self moveIndex:index + 2 toValue:kMaxMoveDistance / 3];
+    }
+}
+
+- (void)waveForTouchMoveWithIndex:(NSInteger)index {
+    if (index < _index) { //上移
         [self moveIndex:index toValue:kMaxMoveDistance];
         if (index - 1 >= 0) {
             [self moveIndex:index - 1 toValue:kMaxMoveDistance * 2 / 3];
@@ -248,68 +255,45 @@ static CGFloat const kFeatureViewSize = 55;
         if (index + 2 < _indexCount) {
             [self moveIndex:index + 2 toValue:kMaxMoveDistance / 3];
         }
+        if (index + 3 < _indexCount) {
+            [self moveIndex:index + 3 toValue:0];
+        }
+        for (NSInteger i = 0; i < index - 2; i++) {
+            [self moveIndex:i toValue:0];
+        }
+        for (NSInteger i = _indexCount - 1; i > index + 3; i--) {
+            [self moveIndex:i toValue:0];
+        }
     }
-}
-
-- (void)waveForTouchMoveWithIndex:(NSInteger)index
-{
-    if (index >=0 && index < _indexCount && _index != index) {
-        if (index < _index) { //上移
-            [self moveIndex:index toValue:kMaxMoveDistance];
-            if (index - 1 >= 0) {
-                [self moveIndex:index - 1 toValue:kMaxMoveDistance * 2 / 3];
-            }
-            if (index - 2 >= 0) {
-                [self moveIndex:index - 2 toValue:kMaxMoveDistance / 3];
-            }
-            if (index + 1 < _indexCount) {
-                [self moveIndex:index + 1 toValue:kMaxMoveDistance * 2 / 3];
-            }
-            if (index + 2 < _indexCount) {
-                [self moveIndex:index + 2 toValue:kMaxMoveDistance / 3];
-            }
-            if (index + 3 < _indexCount) {
-                [self moveIndex:index + 3 toValue:0];
-            }
-            for (NSInteger i = 0; i < index - 2; i++) {
-                [self moveIndex:i toValue:0];
-            }
-            for (NSInteger i = _indexCount - 1; i > index + 3; i--) {
-                [self moveIndex:i toValue:0];
-            }
+    if (index > _index) { //下移
+        [self moveIndex:index toValue:kMaxMoveDistance];
+        if (index + 1 < _indexCount) {
+            [self moveIndex:index + 1 toValue:kMaxMoveDistance * 2 / 3];
         }
-        if (index > _index) { //下移
-            [self moveIndex:index toValue:kMaxMoveDistance];
-            if (index + 1 < _indexCount) {
-                [self moveIndex:index + 1 toValue:kMaxMoveDistance * 2 / 3];
-            }
-            if (index + 2 < _indexCount) {
-                [self moveIndex:index + 2 toValue:kMaxMoveDistance / 3];
-            }
-            if (index - 1 >= 0) {
-                [self moveIndex:index - 1 toValue:kMaxMoveDistance * 2 / 3];
-            }
-            if (index - 2 >= 0) {
-                [self moveIndex:index - 2 toValue:kMaxMoveDistance / 3];
-            }
-            if (index - 3 >= 0) {
-                [self moveIndex:index - 3 toValue:0];
-            }
-            for (NSInteger i = 0; i < index - 3; i++) {
-                [self moveIndex:i toValue:0];
-            }
-            for (NSInteger i = _indexCount - 1; i > index + 2; i--) {
-                [self moveIndex:i toValue:0];
-            }
+        if (index + 2 < _indexCount) {
+            [self moveIndex:index + 2 toValue:kMaxMoveDistance / 3];
         }
-        _index = index;
+        if (index - 1 >= 0) {
+            [self moveIndex:index - 1 toValue:kMaxMoveDistance * 2 / 3];
+        }
+        if (index - 2 >= 0) {
+            [self moveIndex:index - 2 toValue:kMaxMoveDistance / 3];
+        }
+        if (index - 3 >= 0) {
+            [self moveIndex:index - 3 toValue:0];
+        }
+        for (NSInteger i = 0; i < index - 3; i++) {
+            [self moveIndex:i toValue:0];
+        }
+        for (NSInteger i = _indexCount - 1; i > index + 2; i--) {
+            [self moveIndex:i toValue:0];
+        }
     }
 }
 
 #pragma mark - Move Animation
 
-- (void)moveIndex:(NSInteger)index toValue:(CGFloat)toValue
-{
+- (void)moveIndex:(NSInteger)index toValue:(CGFloat)toValue {
     UILabel *label = _labels[index];
     
     CABasicAnimation *translation = [CABasicAnimation animation];
@@ -321,7 +305,7 @@ static CGFloat const kFeatureViewSize = 55;
     group.animations = @[translation];
     group.fillMode = kCAFillModeForwards;
     group.removedOnCompletion = NO;
-    group.duration = kAnimationDuration * (-kMaxMoveDistance - label.dsl_fromValue) / (-kMaxMoveDistance);
+    group.duration = kAnimationDuration;// * (-kMaxMoveDistance - label.dsl_fromValue) / (-kMaxMoveDistance);
     
     [label.layer addAnimation:group forKey:@"label"];
     
@@ -340,8 +324,7 @@ static CGFloat const kFeatureViewSize = 55;
 
 #pragma mark - Feature method
 
-- (void)featureForTouchBeginWithIndex:(NSInteger)index
-{
+- (void)featureForTouchBeginWithIndex:(NSInteger)index {
     if (index < 0 || index >= _indexCount) {
         return;
     }
